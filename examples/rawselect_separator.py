@@ -13,13 +13,13 @@ from questionary import prompt
 def ask_pystyle(**kwargs):
     # create the question object
     question = questionary.rawselect(
-        "What do you want to do?",
+        'What do you want to do?',
         choices=[
-            "Order a pizza",
-            "Make a reservation",
+            'Order a pizza',
+            'Make a reservation',
             Separator(),
-            "Ask opening hours",
-            "Talk to the receptionist",
+            'Ask opening hours',
+            'Talk to the receptionist',
         ],
         style=custom_style_dope,
         **kwargs,
@@ -32,15 +32,15 @@ def ask_pystyle(**kwargs):
 def ask_dictstyle(**kwargs):
     questions = [
         {
-            "type": "rawselect",
-            "name": "theme",
-            "message": "What do you want to do?",
-            "choices": [
-                "Order a pizza",
-                "Make a reservation",
+            'type': 'rawselect',
+            'name': 'theme',
+            'message': 'What do you want to do?',
+            'choices': [
+                'Order a pizza',
+                'Make a reservation',
                 Separator(),
-                "Ask opening hours",
-                "Talk to the receptionist",
+                'Ask opening hours',
+                'Talk to the receptionist',
             ],
         },
     ]
@@ -48,5 +48,5 @@ def ask_dictstyle(**kwargs):
     return prompt(questions, style=custom_style_dope, **kwargs)
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     pprint(ask_pystyle())

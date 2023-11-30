@@ -1,5 +1,6 @@
+from __future__ import annotations
+
 from typing import Any
-from typing import Optional
 
 from questionary import Style
 from questionary.constants import DEFAULT_QUESTION_PREFIX
@@ -9,10 +10,10 @@ from questionary.question import Question
 
 def password(
     message: str,
-    default: str = "",
+    default: str = '',
     validate: Any = None,
     qmark: str = DEFAULT_QUESTION_PREFIX,
-    style: Optional[Style] = None,
+    style: Style | None = None,
     **kwargs: Any,
 ) -> Question:
     """A text input where a user can enter a secret which won't be displayed on the CLI.
@@ -57,5 +58,5 @@ def password(
     """
 
     return text.text(
-        message, default, validate, qmark, style, is_password=True, **kwargs
+        message, default, validate, qmark, style, is_password=True, **kwargs,
     )

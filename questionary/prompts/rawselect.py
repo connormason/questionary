@@ -1,8 +1,7 @@
+from __future__ import annotations
+
 from typing import Any
-from typing import Dict
-from typing import Optional
 from typing import Sequence
-from typing import Union
 
 from prompt_toolkit.styles import Style
 
@@ -15,11 +14,11 @@ from questionary.question import Question
 
 def rawselect(
     message: str,
-    choices: Sequence[Union[str, Choice, Dict[str, Any]]],
-    default: Optional[str] = None,
+    choices: Sequence[str | Choice | dict[str, Any]],
+    default: str | None = None,
     qmark: str = DEFAULT_QUESTION_PREFIX,
-    pointer: Optional[str] = DEFAULT_SELECTED_POINTER,
-    style: Optional[Style] = None,
+    pointer: str | None = DEFAULT_SELECTED_POINTER,
+    style: Style | None = None,
     **kwargs: Any,
 ) -> Question:
     """Ask the user to select one item from a list of choices using shortcuts.

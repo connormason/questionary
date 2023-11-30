@@ -6,7 +6,7 @@ def test_default_values_of():
         pass
 
     defaults = utils.default_values_of(f)
-    assert defaults == ["b", "c", "args", "kwargs"]
+    assert defaults == ['b', 'c', 'args', 'kwargs']
 
 
 def test_default_values_of_no_args():
@@ -22,7 +22,7 @@ def test_arguments_of():
         pass
 
     defaults = utils.arguments_of(f)
-    assert defaults == ["a", "b", "c", "args", "kwargs"]
+    assert defaults == ['a', 'b', 'c', 'args', 'kwargs']
 
 
 def test_arguments_of_no_args():
@@ -38,17 +38,17 @@ def test_filter_kwargs():
         pass
 
     kwargs = {
-        "a": 1,
-        "b": 2,
-        "c": 3,
-        "d": 4,
+        'a': 1,
+        'b': 2,
+        'c': 3,
+        'd': 4,
     }
 
     filtered = utils.used_kwargs(kwargs, f)
-    assert "a" in filtered
-    assert "b" in filtered
-    assert "c" in filtered
-    assert "d" not in filtered
+    assert 'a' in filtered
+    assert 'b' in filtered
+    assert 'c' in filtered
+    assert 'd' not in filtered
 
 
 def test_filter_kwargs_empty():
@@ -56,8 +56,8 @@ def test_filter_kwargs_empty():
         pass
 
     kwargs = {
-        "a": 1,
-        "b": 2,
+        'a': 1,
+        'b': 2,
     }
 
     filtered = utils.used_kwargs(kwargs, f)
@@ -69,7 +69,7 @@ def test_required_arguments_of():
         pass
 
     defaults = utils.required_arguments(f)
-    assert defaults == ["a"]
+    assert defaults == ['a']
 
 
 def test_required_arguments_of_no_args():
@@ -84,9 +84,9 @@ def test_missing_arguments():
     def f(a, b=2, c=None, *args, **kwargs):
         pass
 
-    assert utils.missing_arguments(f, {}) == {"a"}
-    assert utils.missing_arguments(f, {"a": 1}) == set()
-    assert utils.missing_arguments(f, {"a": 1, "b": 2}) == set()
+    assert utils.missing_arguments(f, {}) == {'a'}
+    assert utils.missing_arguments(f, {'a': 1}) == set()
+    assert utils.missing_arguments(f, {'a': 1, 'b': 2}) == set()
 
 
 def test_missing_arguments_of_no_args():

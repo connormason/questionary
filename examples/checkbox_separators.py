@@ -14,14 +14,14 @@ from questionary import prompt
 def ask_pystyle(**kwargs):
     # create the question object
     question = questionary.checkbox(
-        "Select toppings",
-        qmark="😃",
+        'Select toppings',
+        qmark='😃',
         choices=[
-            Choice("foo", checked=True),
+            Choice('foo', checked=True),
             Separator(),
-            Choice("bar", disabled="nope"),
-            "bazz",
-            Separator("--END--"),
+            Choice('bar', disabled='nope'),
+            'bazz',
+            Separator('--END--'),
         ],
         style=custom_style_dope,
         **kwargs,
@@ -34,16 +34,16 @@ def ask_pystyle(**kwargs):
 def ask_dictstyle(**kwargs):
     questions = [
         {
-            "type": "checkbox",
-            "qmark": "😃",
-            "message": "Select toppings",
-            "name": "toppings",
-            "choices": [
-                {"name": "foo", "checked": True},
+            'type': 'checkbox',
+            'qmark': '😃',
+            'message': 'Select toppings',
+            'name': 'toppings',
+            'choices': [
+                {'name': 'foo', 'checked': True},
                 Separator(),
-                {"name": "bar", "disabled": "nope"},
-                "bazz",
-                Separator("--END--"),
+                {'name': 'bar', 'disabled': 'nope'},
+                'bazz',
+                Separator('--END--'),
             ],
         }
     ]
@@ -51,5 +51,5 @@ def ask_dictstyle(**kwargs):
     return prompt(questions, style=custom_style_dope, **kwargs)
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     pprint(ask_pystyle())

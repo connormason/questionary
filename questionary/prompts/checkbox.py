@@ -1,11 +1,8 @@
+from __future__ import annotations
+
 from typing import Any
 from typing import Callable
-from typing import Dict
-from typing import List
-from typing import Optional
 from typing import Sequence
-from typing import Tuple
-from typing import Union
 
 from prompt_toolkit.application import Application
 from prompt_toolkit.formatted_text import FormattedText
@@ -27,17 +24,17 @@ from questionary.styles import merge_styles_default
 
 def checkbox(
     message: str,
-    choices: Sequence[Union[str, Choice, Dict[str, Any]]],
-    default: Optional[str] = None,
-    validate: Callable[[List[str]], Union[bool, str]] = lambda a: True,
+    choices: Sequence[str | Choice | dict[str, Any]],
+    default: str | None = None,
+    validate: Callable[[list[str]], bool | str] = lambda a: True,
     qmark: str = DEFAULT_QUESTION_PREFIX,
-    pointer: Optional[str] = DEFAULT_SELECTED_POINTER,
-    style: Optional[Style] = None,
-    initial_choice: Optional[Union[str, Choice, Dict[str, Any]]] = None,
+    pointer: str | None = DEFAULT_SELECTED_POINTER,
+    style: Style | None = None,
+    initial_choice: str | Choice | dict[str, Any] | None = None,
     use_arrow_keys: bool = True,
     use_jk_keys: bool = True,
     use_emacs_keys: bool = True,
-    instruction: Optional[str] = None,
+    instruction: str | None = None,
     **kwargs: Any,
 ) -> Question:
     """Ask the user to select from a list of items.
@@ -112,8 +109,8 @@ def checkbox(
 
     if not (use_arrow_keys or use_jk_keys or use_emacs_keys):
         raise ValueError(
-            "Some option to move the selection is required. Arrow keys or j/k or "
-            "Emacs keys."
+            'Some option to move the selection is required. Arrow keys or j/k or '
+            'Emacs keys.',
         )
 
     merged_style = merge_styles_default(
@@ -121,67 +118,67 @@ def checkbox(
             # Disable the default inverted colours bottom-toolbar behaviour (for
             # the error message). However it can be re-enabled with a custom
             # style.
-            Style([("bottom-toolbar", "noreverse")]),
+            Style([('bottom-toolbar', 'noreverse')]),
             style,
-        ]
+        ],
     )
 
     if not callable(validate):
-        raise ValueError("validate must be callable")
+        raise ValueError('validate must be callable')
 
     ic = InquirerControl(
-        choices, default, pointer=pointer, initial_choice=initial_choice
+        choices, default, pointer=pointer, initial_choice=initial_choice,
     )
 
-    def get_prompt_tokens() -> List[Tuple[str, str]]:
+    def get_prompt_tokens() -> list[tuple[str, str]]:
         tokens = []
 
-        tokens.append(("class:qmark", qmark))
-        tokens.append(("class:question", " {} ".format(message)))
+        tokens.append(('class:qmark', qmark))
+        tokens.append(('class:question', f' {message} '))
 
         if ic.is_answered:
             nbr_selected = len(ic.selected_options)
             if nbr_selected == 0:
-                tokens.append(("class:answer", "done"))
+                tokens.append(('class:answer', 'done'))
             elif nbr_selected == 1:
                 if isinstance(ic.get_selected_values()[0].title, list):
                     ts = ic.get_selected_values()[0].title
                     tokens.append(
                         (
-                            "class:answer",
-                            "".join([token[1] for token in ts]),  # type:ignore
-                        )
+                            'class:answer',
+                            ''.join([token[1] for token in ts]),  # type:ignore
+                        ),
                     )
                 else:
                     tokens.append(
                         (
-                            "class:answer",
-                            "[{}]".format(ic.get_selected_values()[0].title),
-                        )
+                            'class:answer',
+                            f'[{ic.get_selected_values()[0].title}]',
+                        ),
                     )
             else:
                 tokens.append(
-                    ("class:answer", "done ({} selections)".format(nbr_selected))
+                    ('class:answer', f'done ({nbr_selected} selections)'),
                 )
         else:
             if instruction is not None:
-                tokens.append(("class:instruction", instruction))
+                tokens.append(('class:instruction', instruction))
             else:
                 tokens.append(
                     (
-                        "class:instruction",
-                        "(Use arrow keys to move, "
-                        "<space> to select, "
-                        "<a> to toggle, "
-                        "<i> to invert)",
-                    )
+                        'class:instruction',
+                        '(Use arrow keys to move, '
+                        '<space> to select, '
+                        '<a> to toggle, '
+                        '<i> to invert)',
+                    ),
                 )
         return tokens
 
-    def get_selected_values() -> List[Any]:
+    def get_selected_values() -> list[Any]:
         return [c.value for c in ic.get_selected_values()]
 
-    def perform_validation(selected_values: List[str]) -> bool:
+    def perform_validation(selected_values: list[str]) -> bool:
         verdict = validate(selected_values)
         valid = verdict is True
 
@@ -191,10 +188,10 @@ def checkbox(
             else:
                 error_text = str(verdict)
 
-            error_message = FormattedText([("class:validation-toolbar", error_text)])
+            error_message = FormattedText([('class:validation-toolbar', error_text)])
 
         ic.error_message = (
-            error_message if not valid and ic.submission_attempted else None  # type: ignore[assignment]
+            error_message if not valid and ic.submission_attempted else None
         )
 
         return valid
@@ -206,9 +203,9 @@ def checkbox(
     @bindings.add(Keys.ControlQ, eager=True)
     @bindings.add(Keys.ControlC, eager=True)
     def _(event):
-        event.app.exit(exception=KeyboardInterrupt, style="class:aborting")
+        event.app.exit(exception=KeyboardInterrupt, style='class:aborting')
 
-    @bindings.add(" ", eager=True)
+    @bindings.add(' ', eager=True)
     def toggle(_event):
         pointed_choice = ic.get_pointed_at().value
         if pointed_choice in ic.selected_options:
@@ -218,7 +215,7 @@ def checkbox(
 
         perform_validation(get_selected_values())
 
-    @bindings.add("i", eager=True)
+    @bindings.add('i', eager=True)
     def invert(_event):
         inverted_selection = [
             c.value
@@ -231,7 +228,7 @@ def checkbox(
 
         perform_validation(get_selected_values())
 
-    @bindings.add("a", eager=True)
+    @bindings.add('a', eager=True)
     def all(_event):
         all_selected = True  # all choices have been selected
         for c in ic.choices:
@@ -263,8 +260,8 @@ def checkbox(
         bindings.add(Keys.Up, eager=True)(move_cursor_up)
 
     if use_jk_keys:
-        bindings.add("j", eager=True)(move_cursor_down)
-        bindings.add("k", eager=True)(move_cursor_up)
+        bindings.add('j', eager=True)(move_cursor_down)
+        bindings.add('k', eager=True)(move_cursor_up)
 
     if use_emacs_keys:
         bindings.add(Keys.ControlN, eager=True)(move_cursor_down)
@@ -289,5 +286,5 @@ def checkbox(
             key_bindings=bindings,
             style=merged_style,
             **utils.used_kwargs(kwargs, Application.__init__),
-        )
+        ),
     )

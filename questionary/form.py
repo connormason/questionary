@@ -1,5 +1,6 @@
+from __future__ import annotations
+
 from typing import Any
-from typing import Dict
 from typing import NamedTuple
 from typing import Sequence
 
@@ -20,7 +21,7 @@ class FormField(NamedTuple):
     question: Question
 
 
-def form(**kwargs: Question) -> "Form":
+def form(**kwargs: Question) -> Form:
     """Create a form with multiple questions.
 
     The parameter name of a question will be the key for the answer in
@@ -45,7 +46,7 @@ class Form:
     def __init__(self, *form_fields: FormField) -> None:
         self.form_fields = form_fields
 
-    def unsafe_ask(self, patch_stdout: bool = False) -> Dict[str, Any]:
+    def unsafe_ask(self, patch_stdout: bool = False) -> dict[str, Any]:
         """Ask the questions synchronously and return user response.
 
         Does not catch keyboard interrupts.
@@ -59,7 +60,7 @@ class Form:
         """
         return {f.key: f.question.unsafe_ask(patch_stdout) for f in self.form_fields}
 
-    async def unsafe_ask_async(self, patch_stdout: bool = False) -> Dict[str, Any]:
+    async def unsafe_ask_async(self, patch_stdout: bool = False) -> dict[str, Any]:
         """Ask the questions using asyncio and return user response.
 
         Does not catch keyboard interrupts.
@@ -77,8 +78,8 @@ class Form:
         }
 
     def ask(
-        self, patch_stdout: bool = False, kbi_msg: str = DEFAULT_KBI_MESSAGE
-    ) -> Dict[str, Any]:
+        self, patch_stdout: bool = False, kbi_msg: str = DEFAULT_KBI_MESSAGE,
+    ) -> dict[str, Any]:
         """Ask the questions synchronously and return user response.
 
         Args:
@@ -93,14 +94,14 @@ class Form:
         try:
             return self.unsafe_ask(patch_stdout)
         except KeyboardInterrupt:
-            print("")
+            print('')
             print(kbi_msg)
-            print("")
+            print('')
             return {}
 
     async def ask_async(
-        self, patch_stdout: bool = False, kbi_msg: str = DEFAULT_KBI_MESSAGE
-    ) -> Dict[str, Any]:
+        self, patch_stdout: bool = False, kbi_msg: str = DEFAULT_KBI_MESSAGE,
+    ) -> dict[str, Any]:
         """Ask the questions using asyncio and return user response.
 
         Args:
@@ -115,7 +116,7 @@ class Form:
         try:
             return await self.unsafe_ask_async(patch_stdout)
         except KeyboardInterrupt:
-            print("")
+            print('')
             print(kbi_msg)
-            print("")
+            print('')
             return {}

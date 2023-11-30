@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import sys
 from typing import Any
 
@@ -14,17 +16,17 @@ class Question:
     This is an internal class. Questions should be created using the
     predefined questions (e.g. text or password)."""
 
-    application: "Application[Any]"
+    application: Application[Any]
     should_skip_question: bool
     default: Any
 
-    def __init__(self, application: "Application[Any]") -> None:
+    def __init__(self, application: Application[Any]) -> None:
         self.application = application
         self.should_skip_question = False
         self.default = None
 
     async def ask_async(
-        self, patch_stdout: bool = False, kbi_msg: str = DEFAULT_KBI_MESSAGE
+        self, patch_stdout: bool = False, kbi_msg: str = DEFAULT_KBI_MESSAGE,
     ) -> Any:
         """Ask the question using asyncio and return user response.
 
@@ -42,11 +44,11 @@ class Question:
             sys.stdout.flush()
             return await self.unsafe_ask_async(patch_stdout)
         except KeyboardInterrupt:
-            print("\n{}\n".format(kbi_msg))
+            print(f'\n{kbi_msg}\n')
             return None
 
     def ask(
-        self, patch_stdout: bool = False, kbi_msg: str = DEFAULT_KBI_MESSAGE
+        self, patch_stdout: bool = False, kbi_msg: str = DEFAULT_KBI_MESSAGE,
     ) -> Any:
         """Ask the question synchronously and return user response.
 
@@ -63,7 +65,7 @@ class Question:
         try:
             return self.unsafe_ask(patch_stdout)
         except KeyboardInterrupt:
-            print("\n{}\n".format(kbi_msg))
+            print(f'\n{kbi_msg}\n')
             return None
 
     def unsafe_ask(self, patch_stdout: bool = False) -> Any:
@@ -88,7 +90,7 @@ class Question:
         else:
             return self.application.run()
 
-    def skip_if(self, condition: bool, default: Any = None) -> "Question":
+    def skip_if(self, condition: bool, default: Any = None) -> Question:
         """Skip the question if flag is set and return the default instead.
 
         Args:
@@ -131,4 +133,4 @@ class Question:
         if utils.is_prompt_toolkit_3():
             return await r
         else:
-            return await r.to_asyncio_future()  # type: ignore[attr-defined]
+            return await r.to_asyncio_future()

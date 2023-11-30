@@ -1,11 +1,8 @@
+from __future__ import annotations
+
 from typing import Any
 from typing import Callable
-from typing import Dict
 from typing import Iterable
-from typing import List
-from typing import Optional
-from typing import Tuple
-from typing import Union
 
 from prompt_toolkit.completion import CompleteEvent
 from prompt_toolkit.completion import Completer
@@ -24,16 +21,16 @@ from questionary.styles import merge_styles_default
 
 
 class WordCompleter(Completer):
-    choices_source: Union[List[str], Callable[[], List[str]]]
+    choices_source: list[str] | Callable[[], list[str]]
     ignore_case: bool
-    meta_information: Dict[str, Any]
+    meta_information: dict[str, Any]
     match_middle: bool
 
     def __init__(
         self,
-        choices: Union[List[str], Callable[[], List[str]]],
+        choices: list[str] | Callable[[], list[str]],
         ignore_case: bool = True,
-        meta_information: Optional[Dict[str, Any]] = None,
+        meta_information: dict[str, Any] | None = None,
         match_middle: bool = True,
     ) -> None:
         self.choices_source = choices
@@ -63,14 +60,14 @@ class WordCompleter(Completer):
 
     @staticmethod
     def _display_for_choice(choice: str, index: int, word_before_cursor: str) -> HTML:
-        return HTML("{}<b><u>{}</u></b>{}").format(
+        return HTML('{}<b><u>{}</u></b>{}').format(
             choice[:index],
-            choice[index : index + len(word_before_cursor)],  # noqa: E203
-            choice[index + len(word_before_cursor) : len(choice)],  # noqa: E203
+            choice[index : index + len(word_before_cursor)],
+            choice[index + len(word_before_cursor) : len(choice)],
         )
 
     def get_completions(
-        self, document: Document, complete_event: CompleteEvent
+        self, document: Document, complete_event: CompleteEvent,
     ) -> Iterable[Completion]:
         choices = self._choices()
 
@@ -86,7 +83,7 @@ class WordCompleter(Completer):
                 # didn't find a match
                 continue
 
-            display_meta = self.meta_information.get(choice, "")
+            display_meta = self.meta_information.get(choice, '')
             display = self._display_for_choice(choice, index, word_before_cursor)
 
             yield Completion(
@@ -94,23 +91,23 @@ class WordCompleter(Completer):
                 start_position=-len(choice),
                 display=display.formatted_text,
                 display_meta=display_meta,
-                style="class:answer",
-                selected_style="class:selected",
+                style='class:answer',
+                selected_style='class:selected',
             )
 
 
 def autocomplete(
     message: str,
-    choices: List[str],
-    default: str = "",
+    choices: list[str],
+    default: str = '',
     qmark: str = DEFAULT_QUESTION_PREFIX,
-    completer: Optional[Completer] = None,
-    meta_information: Optional[Dict[str, Any]] = None,
+    completer: Completer | None = None,
+    meta_information: dict[str, Any] | None = None,
     ignore_case: bool = True,
     match_middle: bool = True,
     complete_style: CompleteStyle = CompleteStyle.COLUMN,
     validate: Any = None,
-    style: Optional[Style] = None,
+    style: Style | None = None,
     **kwargs: Any,
 ) -> Question:
     """Prompt the user to enter a message with autocomplete help.
@@ -177,13 +174,13 @@ def autocomplete(
     """
     merged_style = merge_styles_default([style])
 
-    def get_prompt_tokens() -> List[Tuple[str, str]]:
-        return [("class:qmark", qmark), ("class:question", " {} ".format(message))]
+    def get_prompt_tokens() -> list[tuple[str, str]]:
+        return [('class:qmark', qmark), ('class:question', f' {message} ')]
 
-    def get_meta_style(meta: Optional[Dict[str, Any]]) -> Optional[Dict[str, Any]]:
+    def get_meta_style(meta: dict[str, Any] | None) -> dict[str, Any] | None:
         if meta:
             for key in meta:
-                meta[key] = HTML("<text>{}</text>").format(meta[key])
+                meta[key] = HTML('<text>{}</text>').format(meta[key])
 
         return meta
 
@@ -191,7 +188,7 @@ def autocomplete(
 
     if completer is None:
         if not choices:
-            raise ValueError("No choices is given, you should use Text question.")
+            raise ValueError('No choices is given, you should use Text question.')
         # use the default completer
         completer = WordCompleter(
             choices,
@@ -202,7 +199,7 @@ def autocomplete(
 
     p: PromptSession = PromptSession(
         get_prompt_tokens,
-        lexer=SimpleLexer("class:answer"),
+        lexer=SimpleLexer('class:answer'),
         style=merged_style,
         completer=completer,
         validator=validator,

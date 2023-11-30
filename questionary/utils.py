@@ -1,9 +1,8 @@
+from __future__ import annotations
+
 import inspect
 from typing import Any
 from typing import Callable
-from typing import Dict
-from typing import List
-from typing import Set
 
 ACTIVATED_ASYNC_MODE = False
 
@@ -11,10 +10,10 @@ ACTIVATED_ASYNC_MODE = False
 def is_prompt_toolkit_3() -> bool:
     from prompt_toolkit import __version__ as ptk_version
 
-    return ptk_version.startswith("3.")
+    return ptk_version.startswith('3.')
 
 
-def default_values_of(func: Callable[..., Any]) -> List[str]:
+def default_values_of(func: Callable[..., Any]) -> list[str]:
     """Return all parameter names of ``func`` with a default value."""
 
     signature = inspect.signature(func)
@@ -26,13 +25,13 @@ def default_values_of(func: Callable[..., Any]) -> List[str]:
     ]
 
 
-def arguments_of(func: Callable[..., Any]) -> List[str]:
+def arguments_of(func: Callable[..., Any]) -> list[str]:
     """Return the parameter names of the function ``func``."""
 
     return list(inspect.signature(func).parameters.keys())
 
 
-def used_kwargs(kwargs: Dict[str, Any], func: Callable[..., Any]) -> Dict[str, Any]:
+def used_kwargs(kwargs: dict[str, Any], func: Callable[..., Any]) -> dict[str, Any]:
     """Returns only the kwargs which can be used by a function.
 
     Args:
@@ -48,7 +47,7 @@ def used_kwargs(kwargs: Dict[str, Any], func: Callable[..., Any]) -> Dict[str, A
     return {k: v for k, v in kwargs.items() if k in possible_arguments}
 
 
-def required_arguments(func: Callable[..., Any]) -> List[str]:
+def required_arguments(func: Callable[..., Any]) -> list[str]:
     """Return all arguments of a function that do not have a default value."""
     defaults = default_values_of(func)
     args = arguments_of(func)
@@ -58,7 +57,7 @@ def required_arguments(func: Callable[..., Any]) -> List[str]:
     return args  # all args without default values
 
 
-def missing_arguments(func: Callable[..., Any], argdict: Dict[str, Any]) -> Set[str]:
+def missing_arguments(func: Callable[..., Any], argdict: dict[str, Any]) -> set[str]:
     """Return all arguments that are missing to call func."""
     return set(required_arguments(func)) - set(argdict.keys())
 
@@ -73,6 +72,6 @@ async def activate_prompt_toolkit_async_mode() -> None:
         # Tell prompt_toolkit to use asyncio for the event loop.
         import prompt_toolkit as pt
 
-        pt.eventloop.use_asyncio_event_loop()  # type: ignore[attr-defined]
+        pt.eventloop.use_asyncio_event_loop()
 
     ACTIVATED_ASYNC_MODE = True

@@ -1,10 +1,7 @@
-# -*- coding: utf-8 -*-
+from __future__ import annotations
 
 from typing import Any
-from typing import Dict
-from typing import Optional
 from typing import Sequence
-from typing import Union
 
 from prompt_toolkit.application import Application
 from prompt_toolkit.key_binding import KeyBindings
@@ -24,18 +21,18 @@ from questionary.styles import merge_styles_default
 
 def select(
     message: str,
-    choices: Sequence[Union[str, Choice, Dict[str, Any]]],
-    default: Optional[Union[str, Choice, Dict[str, Any]]] = None,
+    choices: Sequence[str | Choice | dict[str, Any]],
+    default: str | Choice | dict[str, Any] | None = None,
     qmark: str = DEFAULT_QUESTION_PREFIX,
-    pointer: Optional[str] = DEFAULT_SELECTED_POINTER,
-    style: Optional[Style] = None,
+    pointer: str | None = DEFAULT_SELECTED_POINTER,
+    style: Style | None = None,
     use_shortcuts: bool = False,
     use_arrow_keys: bool = True,
     use_indicator: bool = False,
     use_jk_keys: bool = True,
     use_emacs_keys: bool = True,
     show_selected: bool = False,
-    instruction: Optional[str] = None,
+    instruction: str | None = None,
     **kwargs: Any,
 ) -> Question:
     """A list of items to select **one** option from.
@@ -115,30 +112,28 @@ def select(
     """
     if not (use_arrow_keys or use_shortcuts or use_jk_keys or use_emacs_keys):
         raise ValueError(
-            (
-                "Some option to move the selection is required. "
-                "Arrow keys, j/k keys, emacs keys, or shortcuts."
-            )
+            'Some option to move the selection is required. '
+            'Arrow keys, j/k keys, emacs keys, or shortcuts.',
         )
 
     if use_shortcuts and use_jk_keys:
-        if any(getattr(c, "shortcut_key", "") in ["j", "k"] for c in choices):
+        if any(getattr(c, 'shortcut_key', '') in ['j', 'k'] for c in choices):
             raise ValueError(
-                "A choice is trying to register j/k as a "
-                "shortcut key when they are in use as arrow keys "
-                "disable one or the other."
+                'A choice is trying to register j/k as a '
+                'shortcut key when they are in use as arrow keys '
+                'disable one or the other.',
             )
 
     if choices is None or len(choices) == 0:
-        raise ValueError("A list of choices needs to be provided.")
+        raise ValueError('A list of choices needs to be provided.')
 
     if use_shortcuts and len(choices) > len(InquirerControl.SHORTCUT_KEYS):
         raise ValueError(
-            "A list with shortcuts supports a maximum of {} "
-            "choices as this is the maximum number "
-            "of keyboard shortcuts that are available. You"
-            "provided {} choices!"
-            "".format(len(InquirerControl.SHORTCUT_KEYS), len(choices))
+            'A list with shortcuts supports a maximum of {} '
+            'choices as this is the maximum number '
+            'of keyboard shortcuts that are available. You'
+            'provided {} choices!'
+            ''.format(len(InquirerControl.SHORTCUT_KEYS), len(choices)),
         )
 
     merged_style = merge_styles_default([style])
@@ -156,29 +151,29 @@ def select(
 
     def get_prompt_tokens():
         # noinspection PyListCreation
-        tokens = [("class:qmark", qmark), ("class:question", " {} ".format(message))]
+        tokens = [('class:qmark', qmark), ('class:question', f' {message} ')]
 
         if ic.is_answered:
             if isinstance(ic.get_pointed_at().title, list):
                 tokens.append(
                     (
-                        "class:answer",
-                        "".join([token[1] for token in ic.get_pointed_at().title]),
-                    )
+                        'class:answer',
+                        ''.join([token[1] for token in ic.get_pointed_at().title]),
+                    ),
                 )
             else:
-                tokens.append(("class:answer", ic.get_pointed_at().title))
+                tokens.append(('class:answer', ic.get_pointed_at().title))
         else:
             if instruction:
-                tokens.append(("class:instruction", instruction))
+                tokens.append(('class:instruction', instruction))
             else:
                 if use_shortcuts and use_arrow_keys:
-                    instruction_msg = "(Use shortcuts or arrow keys)"
+                    instruction_msg = '(Use shortcuts or arrow keys)'
                 elif use_shortcuts and not use_arrow_keys:
-                    instruction_msg = "(Use shortcuts)"
+                    instruction_msg = '(Use shortcuts)'
                 else:
-                    instruction_msg = "(Use arrow keys)"
-                tokens.append(("class:instruction", instruction_msg))
+                    instruction_msg = '(Use arrow keys)'
+                tokens.append(('class:instruction', instruction_msg))
 
         return tokens
 
@@ -189,16 +184,16 @@ def select(
     @bindings.add(Keys.ControlQ, eager=True)
     @bindings.add(Keys.ControlC, eager=True)
     def _(event):
-        event.app.exit(exception=KeyboardInterrupt, style="class:aborting")
+        event.app.exit(exception=KeyboardInterrupt, style='class:aborting')
 
     if use_shortcuts:
         # add key bindings for choices
         for i, c in enumerate(ic.choices):
             if c.shortcut_key is None and not c.disabled and not use_arrow_keys:
                 raise RuntimeError(
-                    "{} does not have a shortcut and arrow keys "
-                    "for movement are disabled. "
-                    "This choice is not reachable.".format(c.title)
+                    '{} does not have a shortcut and arrow keys '
+                    'for movement are disabled. '
+                    'This choice is not reachable.'.format(c.title),
                 )
             if isinstance(c, Separator) or c.shortcut_key is None:
                 continue
@@ -228,8 +223,8 @@ def select(
         bindings.add(Keys.Up, eager=True)(move_cursor_up)
 
     if use_jk_keys:
-        bindings.add("j", eager=True)(move_cursor_down)
-        bindings.add("k", eager=True)(move_cursor_up)
+        bindings.add('j', eager=True)(move_cursor_down)
+        bindings.add('k', eager=True)(move_cursor_up)
 
     if use_emacs_keys:
         bindings.add(Keys.ControlN, eager=True)(move_cursor_down)
@@ -250,5 +245,5 @@ def select(
             key_bindings=bindings,
             style=merged_style,
             **utils.used_kwargs(kwargs, Application.__init__),
-        )
+        ),
     )

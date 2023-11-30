@@ -1,7 +1,6 @@
+from __future__ import annotations
+
 from typing import Any
-from typing import List
-from typing import Optional
-from typing import Tuple
 
 from prompt_toolkit.document import Document
 from prompt_toolkit.lexers import Lexer
@@ -18,13 +17,13 @@ from questionary.styles import merge_styles_default
 
 def text(
     message: str,
-    default: str = "",
+    default: str = '',
     validate: Any = None,
     qmark: str = DEFAULT_QUESTION_PREFIX,
-    style: Optional[Style] = None,
+    style: Style | None = None,
     multiline: bool = False,
-    instruction: Optional[str] = None,
-    lexer: Optional[Lexer] = None,
+    instruction: str | None = None,
+    lexer: Lexer | None = None,
     **kwargs: Any,
 ) -> Question:
     """Prompt the user to enter a free text message.
@@ -76,16 +75,16 @@ def text(
         :class:`Question`: Question instance, ready to be prompted (using ``.ask()``).
     """
     merged_style = merge_styles_default([style])
-    lexer = lexer or SimpleLexer("class:answer")
+    lexer = lexer or SimpleLexer('class:answer')
     validator = build_validator(validate)
 
     if instruction is None and multiline:
         instruction = INSTRUCTION_MULTILINE
 
-    def get_prompt_tokens() -> List[Tuple[str, str]]:
-        result = [("class:qmark", qmark), ("class:question", " {} ".format(message))]
+    def get_prompt_tokens() -> list[tuple[str, str]]:
+        result = [('class:qmark', qmark), ('class:question', f' {message} ')]
         if instruction:
-            result.append(("class:instruction", " {} ".format(instruction)))
+            result.append(('class:instruction', f' {instruction} '))
         return result
 
     p: PromptSession = PromptSession(

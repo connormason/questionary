@@ -1,5 +1,6 @@
+from __future__ import annotations
+
 from typing import Any
-from typing import Optional
 
 from prompt_toolkit import PromptSession
 from prompt_toolkit.formatted_text import to_formatted_text
@@ -20,9 +21,9 @@ def confirm(
     message: str,
     default: bool = True,
     qmark: str = DEFAULT_QUESTION_PREFIX,
-    style: Optional[Style] = None,
+    style: Style | None = None,
     auto_enter: bool = True,
-    instruction: Optional[str] = None,
+    instruction: str | None = None,
     **kwargs: Any,
 ) -> Question:
     """A yes or no question. The user can either confirm or deny.
@@ -66,59 +67,59 @@ def confirm(
     """
     merged_style = merge_styles_default([style])
 
-    status = {"answer": None, "complete": False}
+    status = {'answer': None, 'complete': False}
 
     def get_prompt_tokens():
         tokens = []
 
-        tokens.append(("class:qmark", qmark))
-        tokens.append(("class:question", " {} ".format(message)))
+        tokens.append(('class:qmark', qmark))
+        tokens.append(('class:question', f' {message} '))
 
         if instruction is not None:
-            tokens.append(("class:instruction", instruction))
-        elif not status["complete"]:
+            tokens.append(('class:instruction', instruction))
+        elif not status['complete']:
             _instruction = YES_OR_NO if default else NO_OR_YES
-            tokens.append(("class:instruction", "{} ".format(_instruction)))
+            tokens.append(('class:instruction', f'{_instruction} '))
 
-        if status["answer"] is not None:
-            answer = YES if status["answer"] else NO
-            tokens.append(("class:answer", answer))
+        if status['answer'] is not None:
+            answer = YES if status['answer'] else NO
+            tokens.append(('class:answer', answer))
 
         return to_formatted_text(tokens)
 
     def exit_with_result(event):
-        status["complete"] = True
-        event.app.exit(result=status["answer"])
+        status['complete'] = True
+        event.app.exit(result=status['answer'])
 
     bindings = KeyBindings()
 
     @bindings.add(Keys.ControlQ, eager=True)
     @bindings.add(Keys.ControlC, eager=True)
     def _(event):
-        event.app.exit(exception=KeyboardInterrupt, style="class:aborting")
+        event.app.exit(exception=KeyboardInterrupt, style='class:aborting')
 
-    @bindings.add("n")
-    @bindings.add("N")
+    @bindings.add('n')
+    @bindings.add('N')
     def key_n(event):
-        status["answer"] = False
+        status['answer'] = False
         if auto_enter:
             exit_with_result(event)
 
-    @bindings.add("y")
-    @bindings.add("Y")
+    @bindings.add('y')
+    @bindings.add('Y')
     def key_y(event):
-        status["answer"] = True
+        status['answer'] = True
         if auto_enter:
             exit_with_result(event)
 
     @bindings.add(Keys.ControlH)
     def key_backspace(event):
-        status["answer"] = None
+        status['answer'] = None
 
     @bindings.add(Keys.ControlM, eager=True)
     def set_answer(event):
-        if status["answer"] is None:
-            status["answer"] = default
+        if status['answer'] is None:
+            status['answer'] = default
 
         exit_with_result(event)
 
@@ -128,6 +129,6 @@ def confirm(
 
     return Question(
         PromptSession(
-            get_prompt_tokens, key_bindings=bindings, style=merged_style, **kwargs
-        ).app
+            get_prompt_tokens, key_bindings=bindings, style=merged_style, **kwargs,
+        ).app,
     )

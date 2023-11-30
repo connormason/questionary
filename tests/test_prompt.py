@@ -7,7 +7,7 @@ from tests.utils import patched_prompt
 
 def test_missing_message():
     with pytest.raises(PromptParameterException):
-        prompt([{"type": "confirm", "name": "continue", "default": True}])
+        prompt([{'type': 'confirm', 'name': 'continue', 'default': True}])
 
 
 def test_missing_type():
@@ -15,9 +15,9 @@ def test_missing_type():
         prompt(
             [
                 {
-                    "message": "Do you want to continue?",
-                    "name": "continue",
-                    "default": True,
+                    'message': 'Do you want to continue?',
+                    'name': 'continue',
+                    'default': True,
                 }
             ]
         )
@@ -28,9 +28,9 @@ def test_missing_name():
         prompt(
             [
                 {
-                    "type": "confirm",
-                    "message": "Do you want to continue?",
-                    "default": True,
+                    'type': 'confirm',
+                    'message': 'Do you want to continue?',
+                    'default': True,
                 }
             ]
         )
@@ -41,10 +41,10 @@ def test_invalid_question_type():
         prompt(
             [
                 {
-                    "type": "mytype",
-                    "message": "Do you want to continue?",
-                    "name": "continue",
-                    "default": True,
+                    'type': 'mytype',
+                    'message': 'Do you want to continue?',
+                    'name': 'continue',
+                    'default': True,
                 }
             ]
         )
@@ -56,8 +56,8 @@ def test_missing_print_message():
         prompt(
             [
                 {
-                    "name": "test",
-                    "type": "print",
+                    'name': 'test',
+                    'type': 'print',
                 }
             ]
         )
@@ -66,13 +66,13 @@ def test_missing_print_message():
 def test_print_no_name():
     """'print' type doesn't require a name so it
     should not throw PromptParameterException"""
-    questions = [{"type": "print", "message": "Hello World"}]
-    result = patched_prompt(questions, "")
+    questions = [{'type': 'print', 'message': 'Hello World'}]
+    result = patched_prompt(questions, '')
     assert result == {}
 
 
 def test_print_with_name():
     """'print' type should return {name: None} when name is provided"""
-    questions = [{"name": "hello", "type": "print", "message": "Hello World"}]
-    result = patched_prompt(questions, "")
-    assert result == {"hello": None}
+    questions = [{'name': 'hello', 'type': 'print', 'message': 'Hello World'}]
+    result = patched_prompt(questions, '')
+    assert result == {'hello': None}

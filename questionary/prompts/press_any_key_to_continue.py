@@ -1,5 +1,6 @@
+from __future__ import annotations
+
 from typing import Any
-from typing import Optional
 
 from prompt_toolkit import PromptSession
 from prompt_toolkit.formatted_text import to_formatted_text
@@ -12,8 +13,8 @@ from questionary.styles import merge_styles_default
 
 
 def press_any_key_to_continue(
-    message: Optional[str] = None,
-    style: Optional[Style] = None,
+    message: str | None = None,
+    style: Style | None = None,
     **kwargs: Any,
 ):
     """Wait until user presses any key to continue.
@@ -36,12 +37,12 @@ def press_any_key_to_continue(
     merged_style = merge_styles_default([style])
 
     if message is None:
-        message = "Press any key to continue..."
+        message = 'Press any key to continue...'
 
     def get_prompt_tokens():
         tokens = []
 
-        tokens.append(("class:question", f" {message} "))
+        tokens.append(('class:question', f' {message} '))
 
         return to_formatted_text(tokens)
 
@@ -56,6 +57,6 @@ def press_any_key_to_continue(
 
     return Question(
         PromptSession(
-            get_prompt_tokens, key_bindings=bindings, style=merged_style, **kwargs
-        ).app
+            get_prompt_tokens, key_bindings=bindings, style=merged_style, **kwargs,
+        ).app,
     )

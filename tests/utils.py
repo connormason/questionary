@@ -13,21 +13,21 @@ prompt_toolkit_version = tuple([int(v) for v in prompt_toolkit.VERSION])
 
 
 class KeyInputs:
-    DOWN = "\x1b[B"
-    UP = "\x1b[A"
-    LEFT = "\x1b[D"
-    RIGHT = "\x1b[C"
-    ENTER = "\r"
-    ESCAPE = "\x1b"
-    CONTROLC = "\x03"
-    CONTROLN = "\x0e"
-    CONTROLP = "\x10"
-    BACK = "\x7f"
-    SPACE = " "
-    TAB = "\x09"
-    ONE = "1"
-    TWO = "2"
-    THREE = "3"
+    DOWN = '\x1b[B'
+    UP = '\x1b[A'
+    LEFT = '\x1b[D'
+    RIGHT = '\x1b[C'
+    ENTER = '\r'
+    ESCAPE = '\x1b'
+    CONTROLC = '\x03'
+    CONTROLN = '\x0e'
+    CONTROLP = '\x10'
+    BACK = '\x7f'
+    SPACE = ' '
+    TAB = '\x09'
+    ONE = '1'
+    TWO = '2'
+    THREE = '3'
 
 
 def feed_cli_with_input(_type, message, texts, sleep_time=1, **kwargs):

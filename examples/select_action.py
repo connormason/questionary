@@ -1,12 +1,12 @@
 import questionary
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     action = (
         questionary.select(
-            "What do you want to do?",
-            choices=["Order a pizza", "Make a reservation", "Ask for opening hours"],
+            'What do you want to do?',
+            choices=['Order a pizza', 'Make a reservation', 'Ask for opening hours'],
         ).ask()
-        or "do nothing"
+        or 'do nothing'
     )
 
     print(f"Sorry, I can't {action}. Bye! 👋")

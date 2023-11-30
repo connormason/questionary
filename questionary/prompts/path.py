@@ -1,10 +1,9 @@
+from __future__ import annotations
+
 import os
 from typing import Any
 from typing import Callable
 from typing import Iterable
-from typing import List
-from typing import Optional
-from typing import Tuple
 
 from prompt_toolkit.completion import CompleteEvent
 from prompt_toolkit.completion import Completion
@@ -36,8 +35,8 @@ class GreatUXPathCompleter(PathCompleter):
     def __init__(
         self,
         only_directories: bool = False,
-        get_paths: Optional[Callable[[], List[str]]] = None,
-        file_filter: Optional[Callable[[str], bool]] = None,
+        get_paths: Callable[[], list[str]] | None = None,
+        file_filter: Callable[[str], bool] | None = None,
         min_input_len: int = 0,
         expanduser: bool = False,
     ) -> None:
@@ -62,14 +61,14 @@ class GreatUXPathCompleter(PathCompleter):
                 exist.
         """
         # if get_paths is None, make it return the current working dir
-        get_paths = get_paths or (lambda: ["."])
+        get_paths = get_paths or (lambda: ['.'])
         # validation of get_paths
         for current_path in get_paths():
             if not os.path.isdir(current_path):
                 raise (
                     ValueError(
                         "\n Completer for file paths 'get_paths' must return only existing directories, but"
-                        f" '{current_path}' does not exist."
+                        f" '{current_path}' does not exist.",
                     )
                 )
         # call PathCompleter __init__
@@ -82,7 +81,7 @@ class GreatUXPathCompleter(PathCompleter):
         )
 
     def get_completions(
-        self, document: Document, complete_event: CompleteEvent
+        self, document: Document, complete_event: CompleteEvent,
     ) -> Iterable[Completion]:
         """Get completions.
 
@@ -90,8 +89,8 @@ class GreatUXPathCompleter(PathCompleter):
         for directories end with a path separator. Also make sure the right path
         separator is used.
         """
-        completions = super(GreatUXPathCompleter, self).get_completions(
-            document, complete_event
+        completions = super().get_completions(
+            document, complete_event,
         )
 
         for completion in completions:
@@ -100,7 +99,7 @@ class GreatUXPathCompleter(PathCompleter):
             styled_display = completion.display[0]
             # styled display is a formatted text (a tuple of the text and its style)
             # second tuple entry is the text
-            if styled_display[1][-1] == "/":
+            if styled_display[1][-1] == '/':
                 # replace separator with the OS specific one
                 display_text = styled_display[1][:-1] + os.path.sep
                 # update the styled display with the modified text
@@ -115,14 +114,14 @@ class GreatUXPathCompleter(PathCompleter):
 
 def path(
     message: str,
-    default: str = "",
+    default: str = '',
     qmark: str = DEFAULT_QUESTION_PREFIX,
     validate: Any = None,
-    completer: Optional[Completer] = None,
-    style: Optional[Style] = None,
+    completer: Completer | None = None,
+    style: Style | None = None,
     only_directories: bool = False,
-    get_paths: Optional[Callable[[], List[str]]] = None,
-    file_filter: Optional[Callable[[str], bool]] = None,
+    get_paths: Callable[[], list[str]] | None = None,
+    file_filter: Callable[[str], bool] | None = None,
     complete_style: CompleteStyle = CompleteStyle.MULTI_COLUMN,
     **kwargs: Any,
 ) -> Question:
@@ -185,11 +184,11 @@ def path(
 
     Returns:
         :class:`Question`: Question instance, ready to be prompted (using ``.ask()``).
-    """  # noqa: W505, E501
+    """  # noqa: E501
     merged_style = merge_styles_default([style])
 
-    def get_prompt_tokens() -> List[Tuple[str, str]]:
-        return [("class:qmark", qmark), ("class:question", " {} ".format(message))]
+    def get_prompt_tokens() -> list[tuple[str, str]]:
+        return [('class:qmark', qmark), ('class:question', f' {message} ')]
 
     validator = build_validator(validate)
 
@@ -230,7 +229,7 @@ def path(
 
     p: PromptSession = PromptSession(
         get_prompt_tokens,
-        lexer=SimpleLexer("class:answer"),
+        lexer=SimpleLexer('class:answer'),
         style=merged_style,
         completer=completer,
         validator=validator,

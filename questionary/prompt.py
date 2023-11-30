@@ -1,9 +1,8 @@
+from __future__ import annotations
+
 from typing import Any
-from typing import Dict
 from typing import Iterable
 from typing import Mapping
-from typing import Optional
-from typing import Union
 
 from prompt_toolkit.output import ColorDepth
 
@@ -17,19 +16,19 @@ from questionary.prompts.common import print_formatted_text
 class PromptParameterException(ValueError):
     """Received a prompt with a missing parameter."""
 
-    def __init__(self, message: str, errors: Optional[BaseException] = None) -> None:
+    def __init__(self, message: str, errors: BaseException | None = None) -> None:
         # Call the base class constructor with the parameters it needs
-        super().__init__(f"You must provide a `{message}` value", errors)
+        super().__init__(f'You must provide a `{message}` value', errors)
 
 
 def prompt(
-    questions: Union[Dict[str, Any], Iterable[Mapping[str, Any]]],
-    answers: Optional[Mapping[str, Any]] = None,
+    questions: dict[str, Any] | Iterable[Mapping[str, Any]],
+    answers: Mapping[str, Any] | None = None,
     patch_stdout: bool = False,
     true_color: bool = False,
     kbi_msg: str = DEFAULT_KBI_MESSAGE,
     **kwargs: Any,
-) -> Dict[str, Any]:
+) -> dict[str, Any]:
     """Prompt the user for input on all the questions.
 
     Catches keyboard interrupts and prints a message.
@@ -77,19 +76,19 @@ def prompt(
     try:
         return unsafe_prompt(questions, answers, patch_stdout, true_color, **kwargs)
     except KeyboardInterrupt:
-        print("")
+        print('')
         print(kbi_msg)
-        print("")
+        print('')
         return {}
 
 
 def unsafe_prompt(
-    questions: Union[Dict[str, Any], Iterable[Mapping[str, Any]]],
-    answers: Optional[Mapping[str, Any]] = None,
+    questions: dict[str, Any] | Iterable[Mapping[str, Any]],
+    answers: Mapping[str, Any] | None = None,
     patch_stdout: bool = False,
     true_color: bool = False,
     **kwargs: Any,
-) -> Dict[str, Any]:
+) -> dict[str, Any]:
     """Prompt the user for input on all the questions.
 
     Won't catch keyboard interrupts.
@@ -142,76 +141,76 @@ def unsafe_prompt(
     for question_config in questions:
         question_config = dict(question_config)
         # import the question
-        if "type" not in question_config:
-            raise PromptParameterException("type")
+        if 'type' not in question_config:
+            raise PromptParameterException('type')
         # every type except 'print' needs a name
-        if "name" not in question_config and question_config["type"] != "print":
-            raise PromptParameterException("name")
+        if 'name' not in question_config and question_config['type'] != 'print':
+            raise PromptParameterException('name')
 
         _kwargs = kwargs.copy()
         _kwargs.update(question_config)
 
-        _type = _kwargs.pop("type")
-        _filter = _kwargs.pop("filter", None)
-        name = _kwargs.pop("name", None) if _type == "print" else _kwargs.pop("name")
-        when = _kwargs.pop("when", None)
+        _type = _kwargs.pop('type')
+        _filter = _kwargs.pop('filter', None)
+        name = _kwargs.pop('name', None) if _type == 'print' else _kwargs.pop('name')
+        when = _kwargs.pop('when', None)
 
         if true_color:
-            _kwargs["color_depth"] = ColorDepth.TRUE_COLOR
+            _kwargs['color_depth'] = ColorDepth.TRUE_COLOR
 
         if when:
             # at least a little sanity check!
-            if callable(question_config["when"]):
+            if callable(question_config['when']):
                 try:
-                    if not question_config["when"](answers):
+                    if not question_config['when'](answers):
                         continue
                 except Exception as exception:
                     raise ValueError(
-                        f"Problem in 'when' check of " f"{name} question: {exception}"
+                        f"Problem in 'when' check of " f'{name} question: {exception}',
                     ) from exception
             else:
                 raise ValueError(
-                    "'when' needs to be function that accepts a dict argument"
+                    "'when' needs to be function that accepts a dict argument",
                 )
 
         # handle 'print' type
-        if _type == "print":
+        if _type == 'print':
             try:
-                message = _kwargs.pop("message")
+                message = _kwargs.pop('message')
             except KeyError as e:
-                raise PromptParameterException("message") from e
+                raise PromptParameterException('message') from e
 
             # questions can take 'input' arg but print_formatted_text does not
             # Remove 'input', if present, to avoid breaking during tests
-            _kwargs.pop("input", None)
+            _kwargs.pop('input', None)
 
             print_formatted_text(message, **_kwargs)
             if name:
                 answers[name] = None
             continue
 
-        choices = question_config.get("choices")
+        choices = question_config.get('choices')
         if choices is not None and callable(choices):
             calculated_choices = choices(answers)
-            question_config["choices"] = calculated_choices
-            kwargs["choices"] = calculated_choices
+            question_config['choices'] = calculated_choices
+            kwargs['choices'] = calculated_choices
 
         if _filter:
             # at least a little sanity check!
             if not callable(_filter):
                 raise ValueError(
-                    "'filter' needs to be function that accepts an argument"
+                    "'filter' needs to be function that accepts an argument",
                 )
 
-        if callable(question_config.get("default")):
-            _kwargs["default"] = question_config["default"](answers)
+        if callable(question_config.get('default')):
+            _kwargs['default'] = question_config['default'](answers)
 
         create_question_func = prompt_by_name(_type)
 
         if not create_question_func:
             raise ValueError(
                 f"No question type '{_type}' found. "
-                f"Known question types are {', '.join(AVAILABLE_PROMPTS)}."
+                f"Known question types are {', '.join(AVAILABLE_PROMPTS)}.",
             )
 
         missing_args = list(utils.missing_arguments(create_question_func, _kwargs))
@@ -229,7 +228,7 @@ def unsafe_prompt(
                 except Exception as exception:
                     raise ValueError(
                         f"Problem processing 'filter' of {name} "
-                        f"question: {exception}"
+                        f'question: {exception}',
                     ) from exception
             answers[name] = answer
 
