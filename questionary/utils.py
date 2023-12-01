@@ -1,9 +1,19 @@
+from __future__ import annotations
+
 import inspect
 from typing import Any
 from typing import Callable
 from typing import Dict
 from typing import List
 from typing import Set
+from typing import cast
+
+from prompt_toolkit import print_formatted_text
+from prompt_toolkit.formatted_text import FormattedText
+from prompt_toolkit.styles import Style
+from prompt_toolkit.styles import merge_styles
+
+from questionary.constants import DEFAULT_STYLE
 
 ACTIVATED_ASYNC_MODE = False
 
@@ -76,3 +86,29 @@ async def activate_prompt_toolkit_async_mode() -> None:
         pt.eventloop.use_asyncio_event_loop()  # type: ignore[attr-defined]
 
     ACTIVATED_ASYNC_MODE = True
+
+
+def print_question_answer(
+    question: str,
+    answer: str,
+    style: Style | None = None,
+) -> None:
+    """Print a question and answer in the same style as questionary would print it after the user has provided the
+    answer to a prompt. This is helpful for outputting a list of questions/answers, where some of them have
+    pre-filled values
+
+    Args:
+        question: Prompt question.
+        answer: Prompt answer.
+        style: prompt-toolkit style to use for output formatting.
+    """
+    print_formatted_text(
+        FormattedText(
+            [
+                ("class:qmark", "?"),
+                ("class:question", f" {question} "),
+                ("class:answer", f"{answer} "),
+            ]
+        ),
+        style=merge_styles([DEFAULT_STYLE, cast(Style, style)]),
+    )

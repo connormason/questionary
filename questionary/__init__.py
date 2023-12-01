@@ -24,6 +24,7 @@ from questionary.prompts.rawselect import rawselect
 from questionary.prompts.select import select
 from questionary.prompts.text import text
 from questionary.question import Question
+from questionary.utils import print_question_answer
 
 __version__ = questionary.version.__version__
 
@@ -44,6 +45,7 @@ __all__ = [
     "form",
     "prompt",
     "unsafe_prompt",
+    "print_question_answer",
     # commonly used classes
     "Form",
     "FormField",
