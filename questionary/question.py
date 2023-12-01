@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import sys
 from typing import Any
 
@@ -24,7 +26,7 @@ class Question:
         self.default = None
 
     async def ask_async(
-        self, patch_stdout: bool = False, kbi_msg: str = DEFAULT_KBI_MESSAGE
+        self, patch_stdout: bool = False, kbi_msg: str | None = DEFAULT_KBI_MESSAGE
     ) -> Any:
         """Ask the question using asyncio and return user response.
 
@@ -32,7 +34,7 @@ class Question:
             patch_stdout: Ensure that the prompt renders correctly if other threads
                           are printing to stdout.
 
-            kbi_msg: The message to be printed on a keyboard interrupt.
+            kbi_msg: The message to be printed on a keyboard interrupt (or None to not print a message).
 
         Returns:
             `Any`: The answer from the question.
@@ -42,11 +44,12 @@ class Question:
             sys.stdout.flush()
             return await self.unsafe_ask_async(patch_stdout)
         except KeyboardInterrupt:
-            print("\n{}\n".format(kbi_msg))
+            if kbi_msg:
+                print("\n{}\n".format(kbi_msg))
             return None
 
     def ask(
-        self, patch_stdout: bool = False, kbi_msg: str = DEFAULT_KBI_MESSAGE
+        self, patch_stdout: bool = False, kbi_msg: str | None = DEFAULT_KBI_MESSAGE
     ) -> Any:
         """Ask the question synchronously and return user response.
 
@@ -54,7 +57,7 @@ class Question:
             patch_stdout: Ensure that the prompt renders correctly if other threads
                           are printing to stdout.
 
-            kbi_msg: The message to be printed on a keyboard interrupt.
+            kbi_msg: The message to be printed on a keyboard interrupt (or None to not print a message).
 
         Returns:
             `Any`: The answer from the question.
@@ -63,7 +66,8 @@ class Question:
         try:
             return self.unsafe_ask(patch_stdout)
         except KeyboardInterrupt:
-            print("\n{}\n".format(kbi_msg))
+            if kbi_msg:
+                print("\n{}\n".format(kbi_msg))
             return None
 
     def unsafe_ask(self, patch_stdout: bool = False) -> Any:
